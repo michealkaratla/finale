@@ -1,1 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>EventCraft — Event Management Dashboard</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    /* ---------- Reset & base ---------- */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family:Inter,Segoe UI,system-ui,Roboto,'Helvetica Neue',Arial;
+      background:linear-gradient(180deg,#f7f9fb 0%, #ffffff 100%);
+      color:#1f2937; -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.45;
+    }
+    a{color:inherit;text-decoration:none}
+    img{display:block;max-width:100%;height:auto}
+
+    /* ---------- Layout ---------- */
+    .container{max-width:1180px;margin:28px auto;padding:0 24px}
+    header{
+      display:flex;align-items:center;justify-content:space-between;
+      gap:20px;margin-bottom:18px;
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{
+      width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,#ff7a59,#ffb47a);
+      display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:20px;
+      box-shadow:0 6px 18px rgba(255,122,89,0.18);
+    }
+    h1.site-title{font-size:20px;letter-spacing:0.2px}
+    .nav{
+      display:flex;gap:18px;align-items:center;
+    }
+    .nav a{padding:8px 12px;border-radius:8px;color:#374151;transition:all .18s ease}
+    .nav a:hover{background:#fff;border:1px solid #e6e9ee;transform:translateY(-3px);box-shadow:0 6px 18px rgba(35,47,63,0.04)}
+
+    /* ---------- Hero ---------- */
+    .hero{
+      display:grid;grid-template-columns:1fr 460px;gap:28px;align-items:center;margin-bottom:28px;
+    }
+    .hero-card{
+      background:#fff;padding:28px;border-radius:14px;box-shadow:0 10px 30px rgba(16,24,40,0.06);
+      overflow:hidden;
+    }
+    .hero h2{font-size:28px;margin-bottom:10px;color:#0f1724}
+    .hero p{color:#475569;margin-bottom:18px}
+    .cta-row{display:flex;gap:12px;align-items:center}
+    .btn{
+      display:inline-flex;align-items:center;gap:10px;padding:10px 16px;border-radius:10px;
+      cursor:pointer;border:0;font-weight:600;transition:all .18s ease;
+    }
+    .btn-primary{background:linear-gradient(90deg,#ff7a59,#ffb47a);color:#fff;box-shadow:0 8px 24px rgba(255,122,89,0.18)}
+    .btn-primary:hover{transform:translateY(-4px)}
+    .btn-outline{background:#fff;border:1px solid #e6e9ee;color:#111827}
+    .hero-features{display:flex;gap:14px;margin-top:18px}
+    .feature-pill{background:#fff;padding:10px 12px;border-radius:10px;box-shadow:0 6px 16px rgba(15,23,36,0.04);font-weight:600}
+
+    /* ---------- Right hero image ---------- */
+    .hero-art{
+      height:320px;border-radius:14px;overflow:hidden;position:relative;
+      box-shadow:0 10px 30px rgba(16,24,40,0.06);
+    }
+    .hero-art img{width:100%;height:100%;object-fit:cover;filter:contrast(1.02) saturate(1.06)}
+
+    /* ---------- Services ---------- */
+    section{margin-bottom:30px}
+    .section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .section-title h3{font-size:18px}
+    .services-grid{
+      display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px;
+    }
+    .service-card{
+      background:linear-gradient(180deg,#ffffff,#fff);padding:18px;border-radius:12px;
+      box-shadow:0 8px 20px rgba(15,23,36,0.04);transition:transform .18s ease, box-shadow .18s ease;
+      cursor:pointer;display:flex;gap:12px;align-items:flex-start;
+    }
+    .service-card:hover{transform:translateY(-8px);box-shadow:0 16px 40px rgba(15,23,36,0.08)}
+    .service-thumb{width:64px;height:64px;border-radius:10px;flex:0 0 64px;overflow:hidden}
+    .service-thumb img{width:100%;height:100%;object-fit:cover}
+    .service-body h4{margin-bottom:7px;font-size:15px}
+    .service-body p{color:#6b7280;font-size:13px}
+
+    /* ---------- Portfolio ---------- */
+    .filters{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+    .chip{padding:8px 12px;border-radius:999px;background:#fff;border:1px solid #eef2f7;cursor:pointer;font-weight:600;transition:all .12s}
+    .chip.active{background:linear-gradient(90deg,#ff7a59,#ffb47a);color:#fff;border:none;box-shadow:0 8px 24px rgba(255,122,89,0.12)}
+    .portfolio-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+    .portfolio-card{position:relative;border-radius:12px;overflow:hidden;cursor:pointer}
+    .portfolio-card img{width:100%;height:180px;object-fit:cover;transition:transform .26s ease}
+    .portfolio-card:hover img{transform:scale(1.06)}
+    .portfolio-overlay{
+      position:absolute;left:0;right:0;bottom:0;padding:12px;background:linear-gradient(180deg,transparent,rgba(2,6,23,0.6));
+      color:#fff;font-weight:700
+    }
+
+    /* ---------- Contact ---------- */
+    .contact-grid{display:grid;grid-template-columns:1fr 420px;gap:20px;align-items:start}
+    .contact-card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 10px 30px rgba(16,24,40,0.04)}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+    input,textarea,select{
+      width:100%;padding:10px;border-radius:8px;border:1px solid #e6e9ee;font-size:14px
+    }
+    textarea{resize:vertical;min-height:120px}
+
+    /* ---------- Request Modal ---------- */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.45);display:flex;align-items:center;justify-content:center;z-index:60;opacity:0;pointer-events:none;transition:opacity .18s}
+    .modal-backdrop.visible{opacity:1;pointer-events:auto}
+    .modal{width:100%;max-width:720px;background:#fff;border-radius:12px;padding:20px;box-shadow:0 20px 60px rgba(2,6,23,0.18)}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .close-btn{background:#fff;border:1px solid #eef2f7;padding:8px;border-radius:8px;cursor:pointer}
+
+    /* ---------- Portfolio Lightbox ---------- */
+    .lightbox{position:fixed;inset:0;background:rgba(2,6,23,0.85);display:flex;align-items:center;justify-content:center;z-index:70;opacity:0;pointer-events:none;transition:opacity .18s}
+    .lightbox.visible{opacity:1;pointer-events:auto}
+    .lightbox img{max-width:90%;max-height:80%;border-radius:10px;box-shadow:0 30px 80px rgba(2,6,23,0.6)}
+
+    /* ---------- Footer ---------- */
+    footer{margin-top:18px;padding:16px 0;text-align:center;color:#64748b;font-size:13px}
+
+    /* ---------- Small screens ---------- */
+    @media (max-width:980px){
+      .hero{grid-template-columns:1fr;row-gap:16px}
+      .contact-grid{grid-template-columns:1fr}
+      .hero-art{height:260px}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="brand">
+        <div class="logo">EC</div>
+        <div>
+          <h1 class="site-title">EventCraft</h1>
+          <div style="font-size:13px;color:#6b7280">Creative events • Flawless execution</div>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Main navigation">
+        <a href="#services" onclick="navTo('services')">Services</a>
+        <a href="#portfolio" onclick="navTo('portfolio')">Portfolio</a>
+        <a href="#contact" onclick="navTo('contact')">Contact</a>
+        <button class="btn btn-primary" id="reqBtn" title="Request a Service">Request Service</button>
+      </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-card">
+        <h2>We design unforgettable events — Weddings, Corporate, Concerts & more.</h2>
+        <p>EventCraft blends creativity and logistics to deliver memorable experiences. From concept to clean-up, our team handles everything so you can enjoy the moment.</p>
+        <div class="cta-row">
+          <button class="btn btn-primary" onclick="openRequestForm()">Get a Quote</button>
+          <button class="btn btn-outline" onclick="navTo('portfolio')">See Our Work</button>
+        </div>
+
+        <div class="hero-features" aria-hidden="true">
+          <div class="feature-pill">On-site Production</div>
+          <div class="feature-pill">Custom Design</div>
+          <div class="feature-pill">End-to-end Logistics</div>
+        </div>
+      </div>
+
+      <div class="hero-art" aria-hidden="true">
+        <img src="https://source.unsplash.com/1200x800/?event,party,wedding" alt="Event Showcase">
+      </div>
+    </section>
+
+    <!-- Services -->
+    <section id="services">
+      <div class="section-title">
+        <h3>Our Services</h3>
+        <div style="color:#6b7280;font-weight:600">Choose a service to view details</div>
+      </div>
+
+      <div class="services-grid" id="servicesGrid">
+        <!-- Service cards populated by JS -->
+      </div>
+    </section>
+
+    <!-- Portfolio -->
+    <section id="portfolio">
+      <div class="section-title">
+        <h3>Portfolio — Selected Works</h3>
+        <div>
+          <div class="filters" id="filterRow">
+            <!-- filter chips by JS -->
+          </div>
+        </div>
+      </div>
+
+      <div class="portfolio-grid" id="portfolioGrid">
+        <!-- portfolio items by JS -->
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+      <div class="section-title">
+        <h3>Contact & Inquiry</h3>
+        <div style="color:#6b7280">Send a message or request a quote</div>
+      </div>
+
+      <div class="contact-grid">
+        <div class="contact-card">
+          <h4 style="margin-bottom:8px">Quick Message</h4>
+          <p style="color:#6b7280;margin-bottom:12px">Tell us about your event and we'll get back within 24 hours.</p>
+
+          <div style="margin-bottom:8px" class="form-row">
+            <input id="qName" placeholder="Your name">
+            <input id="qEmail" placeholder="Email or phone">
+          </div>
+          <input id="qSubject" placeholder="Event type (e.g., Wedding)">
+          <textarea id="qMessage" placeholder="A brief message..."></textarea>
+          <div style="display:flex;gap:10px;margin-top:12px">
+            <button class="btn btn-primary" onclick="submitQuickMessage()">Send Message</button>
+            <button class="btn btn-outline" onclick="openRequestForm()">Request a Quote</button>
+          </div>
+        </div>
+
+        <aside class="contact-card" style="display:flex;flex-direction:column;gap:12px;justify-content:center">
+          <div>
+            <strong>Phone:</strong> +1 (555) 123-4567
+          </div>
+          <div>
+            <strong>Email:</strong> hello@eventcraft.example
+          </div>
+          <div>
+            <strong>Office:</strong> 234 Creative Ave, Suite 500
+          </div>
+          <div style="margin-top:8px;color:#6b7280;font-size:13px">
+            We also provide on-site consultations and venue walkthroughs.
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <footer>
+      © <span id="year"></span> EventCraft • Designed with ❤️ — Built for modern events
+    </footer>
+  </div>
+
+  <!-- Request Modal -->
+  <div class="modal-backdrop" id="modal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <h4 id="modalTitle">Request a Service</h4>
+        <button class="close-btn" onclick="closeRequestForm()">✕</button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:16px">
+        <div>
+          <label style="font-weight:700;margin-bottom:8px;display:block">Event Type</label>
+          <select id="reqEventType">
+            <option>Wedding</option><option>Corporate</option><option>Concert</option><option>Exhibition</option><option>Private Party</option>
+          </select>
+
+          <div style="display:flex;gap:10px;margin-top:12px">
+            <input id="reqName" placeholder="Your name">
+            <input id="reqPhone" placeholder="Phone / Email">
+          </div>
+
+          <textarea id="reqDetails" placeholder="Tell us about guest count, date, location and special requirements..." style="margin-top:12px"></textarea>
+
+          <div style="display:flex;gap:10px;margin-top:12px;align-items:center">
+            <input id="reqBudget" placeholder="Budget (optional)" style="width:170px">
+            <input id="reqDate" type="date" style="width:170px">
+          </div>
+
+          <div style="margin-top:14px;display:flex;gap:10px">
+            <button class="btn btn-primary" onclick="submitRequest()">Submit Request</button>
+            <button class="btn btn-outline" onclick="closeRequestForm()">Cancel</button>
+          </div>
+        </div>
+
+        <div style="padding:14px;background:#f8fafc;border-radius:10px">
+          <h5 style="margin-bottom:8px">How it works</h5>
+          <ol style="color:#6b7280;padding-left:18px;line-height:1.6">
+            <li>We review your request within 24 hours</li>
+            <li>We assign a dedicated manager & proposal</li>
+            <li>Consultation and customized quote follow</li>
+          </ol>
+          <div style="margin-top:10px;font-size:13px;color:#475569">
+            Tip: upload venue photos or a Pinterest board link in the details for a faster quote.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox for portfolio -->
+  <div class="lightbox" id="lightbox" aria-hidden="true" onclick="closeLightbox()">
+    <img id="lightboxImg" alt="Project image">
+  </div>
+
+  <script>
+    // ---------- Data ----------
+    const services = [
+      {id:'wedding',title:'Wedding Planning',desc:'Full-service wedding planning — design, coordination, vendor management.',img:'https://source.unsplash.com/400x400/?wedding,ceremony'},
+      {id:'corporate',title:'Corporate Events',desc:'Conferences, product launches, team offsites with flawless logistics.',img:'https://source.unsplash.com/400x400/?conference,stage'},
+      {id:'concert',title:'Concert & Live Shows',desc:'Stage design, sound, lighting, artist liaison, and crowd management.',img:'https://source.unsplash.com/400x400/?concert,stage,lighting'},
+      {id:'exhibition',title:'Exhibitions & Trade Shows',desc:'Booth design, attendee flow & on-site operations.',img:'https://source.unsplash.com/400x400/?exhibition,trade-show'},
+      {id:'private',title:'Private Parties',desc:'Birthdays, anniversaries & celebrations — bespoke concepts and catering.',img:'https://source.unsplash.com/400x400/?party,celebration'}
+    ];
+
+    const portfolio = [
+      {id:1,title:'Sunset Wedding',tag:'wedding',img:'https://source.unsplash.com/800x600/?wedding,sunset'},
+      {id:2,title:'Tech Summit 2024',tag:'corporate',img:'https://source.unsplash.com/800x600/?conference,tech'},
+      {id:3,title:'Open Air Concert',tag:'concert',img:'https://source.unsplash.com/800x600/?concert,stage'},
+      {id:4,title:'Art Expo',tag:'exhibition',img:'https://source.unsplash.com/800x600/?art,exhibition'},
+      {id:5,title:'Rooftop Party',tag:'private',img:'https://source.unsplash.com/800x600/?party,rooftop'},
+      {id:6,title:'Luxury Wedding',tag:'wedding',img:'https://source.unsplash.com/800x600/?luxury,wedding'},
+      {id:7,title:'Brand Launch',tag:'corporate',img:'https://source.unsplash.com/800x600/?product,launch'},
+      {id:8,title:'Festival Stage',tag:'concert',img:'https://source.unsplash.com/800x600/?festival,stage'}
+    ];
+
+    // ---------- Init ----------
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Populate services
+    const servicesGrid = document.getElementById('servicesGrid');
+    services.forEach(s => {
+      const card = document.createElement('div');
+      card.className = 'service-card';
+      card.innerHTML = `
+        <div class="service-thumb"><img src="${s.img}" alt="${s.title}"></div>
+        <div class="service-body">
+          <h4>${s.title}</h4>
+          <p>${s.desc}</p>
+          <div style="margin-top:10px"><button class="btn btn-primary" onclick="openRequestForm('${s.title}')">Request ${s.title.split(' ')[0]}</button></div>
+        </div>
+      `;
+      servicesGrid.appendChild(card);
+    });
+
+    // Populate portfolio filters and grid
+    const tags = ['all', ...new Set(portfolio.map(p => p.tag))];
+    const filterRow = document.getElementById('filterRow');
+    tags.forEach((t, idx) => {
+      const chip = document.createElement('button');
+      chip.className = 'chip' + (idx===0 ? ' active' : '');
+      chip.textContent = t.charAt(0).toUpperCase()+t.slice(1);
+      chip.onclick = () => { selectFilter(t); };
+      filterRow.appendChild(chip);
+    });
+
+    const portfolioGrid = document.getElementById('portfolioGrid');
+    function renderPortfolio(filter='all'){
+      portfolioGrid.innerHTML = '';
+      const list = portfolio.filter(p => filter==='all' ? true : p.tag===filter);
+      list.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'portfolio-card';
+        card.innerHTML = `
+          <img src="${item.img}" alt="${item.title}" loading="lazy" onclick="openLightbox('${item.img}')">
+          <div class="portfolio-overlay">${item.title}</div>
+        `;
+        portfolioGrid.appendChild(card);
+      });
+    }
+    renderPortfolio();
+
+    function selectFilter(tag){
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      Array.from(document.querySelectorAll('.chip')).find(c => c.textContent.toLowerCase()===tag|| (tag==='all' && c.textContent.toLowerCase()==='all')).classList.add('active');
+      renderPortfolio(tag);
+    }
+
+    // ---------- Modal / Request Form ----------
+    const modal = document.getElementById('modal');
+    function openRequestForm(pref = '') {
+      if(pref){
+        // set event type to pref if it matches a known type (map)
+        const map = {Wedding:'Wedding',Corporate:'Corporate',Concert:'Concert',Exhibition:'Exhibition',Private:'Private Party'};
+        const sel = document.getElementById('reqEventType');
+        for(let i=0;i<sel.options.length;i++){
+          if(sel.options[i].text.toLowerCase().includes(pref.toLowerCase())){ sel.selectedIndex = i; break; }
+        }
+      }
+      modal.classList.add('visible'); modal.setAttribute('aria-hidden','false');
+      document.body.style.overflow='hidden';
+      // focus first input for accessibility
+      setTimeout(()=>document.getElementById('reqName').focus(),160);
+    }
+    function closeRequestForm(){
+      modal.classList.remove('visible'); modal.setAttribute('aria-hidden','true');
+      document.body.style.overflow='';
+    }
+
+    function submitRequest(){
+      const name = document.getElementById('reqName').value.trim();
+      const phone = document.getElementById('reqPhone').value.trim();
+      const details = document.getElementById('reqDetails').value.trim();
+
+      if(!name || !phone || !details){
+        alert('Please complete name, contact and a brief description of your event.');
+        return;
+      }
+      // Simulated submission
+      closeRequestForm();
+      alert('Thanks, ' + name + '! Your request has been received. We will contact you shortly.');
+      // clear fields
+      document.getElementById('reqName').value='';
+      document.getElementById('reqPhone').value='';
+      document.getElementById('reqDetails').value='';
+    }
+
+    // ---------- Quick contact ----------
+    function submitQuickMessage(){
+      const name = document.getElementById('qName').value.trim();
+      const contact = document.getElementById('qEmail').value.trim();
+      const message = document.getElementById('qMessage').value.trim();
+
+      if(!name || !contact || !message){
+        alert('Please fill name, contact and a short message.');
+        return;
+      }
+      document.getElementById('qName').value='';
+      document.getElementById('qEmail').value='';
+      document.getElementById('qMessage').value='';
+      alert('Thanks! Your message has been sent — we will reply within 24 hours.');
+    }
+
+    // ---------- Lightbox ----------
+    const lightbox = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightboxImg');
+    function openLightbox(src){
+      lbImg.src = src; lightbox.classList.add('visible'); lightbox.setAttribute('aria-hidden','false');
+    }
+    function closeLightbox(){
+      lightbox.classList.remove('visible'); lightbox.setAttribute('aria-hidden','true');
+      lbImg.src = '';
+    }
+
+    // close on escape
+    window.addEventListener('keydown', (e)=>{
+      if(e.key==='Escape'){
+        closeRequestForm(); closeLightbox();
+      }
+    });
+
+    // Navbar request button hook
+    document.getElementById('reqBtn').addEventListener('click',()=>openRequestForm());
+
+    // Smooth nav
+    function navTo(id){
+      const el = document.getElementById(id);
+      if(!el) return;
+      window.scrollTo({top: el.offsetTop - 16, behavior:'smooth'});
+    }
+
+    // small accessibility: trap click inside modal (don't close if clicking modal container)
+    document.getElementById('modal').addEventListener('click', (e)=> {
+      if(e.target === document.getElementById('modal')) closeRequestForm();
+    });
+    // lightbox click already closes via onclick on lightbox
+
+  </script>
+</body>
+</html>
 
